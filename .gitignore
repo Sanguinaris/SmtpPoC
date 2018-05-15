@@ -1,0 +1,9 @@
+.vs/
+bld/
+build/
+*.obj
+*.a
+*.o
+*.kdev4
+.kdev4/
+
