@@ -91,10 +91,12 @@ int main(int argc, char* argv[])
 	ConsoleLogger log;
 	SMTPSock smtpReq{ io, log, std::move(ClientName) };
 
-	smtpReq.SendStuffToServer(ServerIp, port, std::move(FromAddy), std::move(ToAddy), std::move(Body), [](auto ctx, auto succ) {
+	std::function<void(bool)> succCall = [&ret](auto succ) {
 		// not gud. this is a c approach. i couldnt be bothered to write an actually move only callback type
-		reinterpret_cast<std::promise<bool>*>(ctx)->set_value(succ);
-	}, &ret);
+		ret.set_value(succ);
+	};
+
+	smtpReq.SendStuffToServer(ServerIp, port, std::move(FromAddy), std::move(ToAddy), std::move(Body), succCall);
 
 	io.run();
 	auto fut = ret.get_future();

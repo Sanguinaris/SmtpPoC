@@ -10,24 +10,23 @@
 
 class SMTPSock{
 public:
-	using SuccessCallback = ASIO_MOVE_ARG(void(*)(bool));
 
 public:
 	// ctor
     SMTPSock(asio::io_context& io, ILogger& log, std::string&& clientName);
 
 public:
-	void SendStuffToServer(const std::string& ip, uint16_t port, std::string&& fromAddy, std::string&& toAddy, std::string&& body, SuccessCallback, void* ctx);
+	void SendStuffToServer(const std::string& ip, uint16_t port, std::string&& fromAddy, std::string&& toAddy, std::string&& body, std::function<void(bool)>);
 
 private:
-	void OnConnected(std::string&& fromAddy, std::string&& toAddy, std::string&& body, SuccessCallback, void* ctx);
-	void OnServiceReady(std::string&& fromAddy, std::string&& toAddy, std::string&& body, SuccessCallback, void* ctx);
-	void OnMailFrom(std::string&& toAddy, std::string&& body, SuccessCallback, void* ctx);
-	void OnRecepientTo(std::string&& body, SuccessCallback, void* ctx);
-	void OnDataPromise(std::string&& body, SuccessCallback, void* ctx);
-	void OnBodySend(SuccessCallback, void* ctx);
-	void OnDisconnect(SuccessCallback, void* ctx);
-	void GetResponseCode(char*, SuccessCallback);
+	void OnConnected(std::string&& fromAddy, std::string&& toAddy, std::string&& body, std::function<void(bool)>);
+	void OnServiceReady(std::string&& fromAddy, std::string&& toAddy, std::string&& body, std::function<void(bool)>);
+	void OnMailFrom(std::string&& toAddy, std::string&& body, std::function<void(bool)>, void* ctx);
+	void OnRecepientTo(std::string&& body, std::function<void(bool)>);
+	void OnDataPromise(std::string&& body, std::function<void(bool)>);
+	void OnBodySend(std::function<void(bool)>);
+	void OnDisconnect(std::function<void(bool)>);
+	void GetResponseCode(char*, std::function<void(bool)>);
 
 private:
 	asio::io_context& io;
